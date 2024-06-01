@@ -1,4 +1,3 @@
-
 class ReadDocs:
 
     def __init__(self):
@@ -7,7 +6,6 @@ class ReadDocs:
     def ReadDoc(self, name_doc: str):
         with open(name_doc,'r') as f:
             self.lines = f.readlines()
-        print(self.lines)
     
     def Tokenizer(self):
         self.lines = [line.strip().split() for line in self.lines]
