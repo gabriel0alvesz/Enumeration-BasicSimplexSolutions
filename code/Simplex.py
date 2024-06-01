@@ -56,23 +56,23 @@ class Simplex:
                 self.basic_solutions[tuple(base_indexes)] = particular_result_xB
             except np.linalg.LinAlgError: # Quando aparece uma matriz singular
                 continue
-        print(self.basic_solutions)
+        # print(self.basic_solutions)
     
-    def FormatSolutions(self) -> dict:
+    def FormatSolutions(self):
         
         formatted_solutions = []
 
         for key, value in self.basic_solutions.items():
-            final_solution_temp = [0] * self.n
+            final_solution_temp = np.zeros(self.n)
             index_aux = 0;
             for i in key:
                 
-                final_solution_temp[i] = value[index_aux]
+                final_solution_temp[i] = value[index_aux].item()
                 index_aux += 1 
             
-            formatted_solutions.append(final_solution_temp);
+            formatted_solutions.append(final_solution_temp)
 
-        return formatted_solutions    
+        return np.array(formatted_solutions)    
     
     def ValidationSolutions(self, array_solutions: list) -> list[Solution]:
 
@@ -86,17 +86,15 @@ class Simplex:
         cont = 0;
         for array in array_solutions:
             
-            print(array)
+            z = np.dot(self.c, array)
 
             if min(array) < 0:
                 response = "inviável"    
-                z = np.dot(self.c, array)
-
+            else:
+                response = "viável"
                 if z < menor:
                     menor = z
                     index = cont
-            else:
-                response = "viável"
 
             cont += 1;
 
@@ -107,21 +105,26 @@ class Simplex:
 
         return solutions_validated_fomart;
 
-
+    def PrintSolution(self, solutions: list):
+        for sol in solutions:
+            if(sol.isGreat):
+                print(f"Solução: x={tuple(sol.final_solution)},  z = {sol.value},  {sol.response} ==> Ótima")
+            else:
+                print(f"Solução: x={tuple(sol.final_solution)},  z = {sol.value}, {sol.response}")
 
 
 sp = Simplex()
 
 sp.CreateMatrices()
 
-sp.PrintData()
-
 sp.FoundBasicSolutions()
 
-teste = sp.FormatSolutions()
+formatadas = sp.FormatSolutions()
 
-for sol in sp.ValidationSolutions(teste):
-    print(f"{sol.final_solution}  z = {sol.value} : {sol.response} ==> {sol.isGreat}")
+final = sp.ValidationSolutions(formatadas)
+
+sp.PrintSolution(final)
+
 
 
         
