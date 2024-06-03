@@ -1,4 +1,5 @@
 import itertools
+from shutil import ReadError
 from ReadDocs import ReadDocs
 import numpy as np
 
@@ -21,10 +22,11 @@ class Simplex:
         self.b: np.array
         self.basic_solutions: dict = {}
 
-    def CreateMatrices(self):
+    def CreateMatrices(self, name_file: str):
         rd = ReadDocs()
         
-        rd.ReadDoc("input.txt")
+        rd.ReadDoc(name_file)
+        
         rd.Tokenizer()
         list_aux = rd.DefineMatrices()
 
@@ -108,23 +110,26 @@ class Simplex:
     def PrintSolution(self, solutions: list):
         for sol in solutions:
             if(sol.isGreat):
-                print(f"Solução: x={tuple(sol.final_solution)},  z = {sol.value},  {sol.response} ==> Ótima")
+                print(f"Solução: x={tuple(sol.final_solution)},\tz = {sol.value},\t{sol.response} ==> Ótima")
             else:
-                print(f"Solução: x={tuple(sol.final_solution)},  z = {sol.value}, {sol.response}")
+                print(f"Solução: x={tuple(sol.final_solution)},\tz = {sol.value},\t{sol.response}")
 
 
-sp = Simplex()
+if __name__ == "__main__":
 
-sp.CreateMatrices()
+    sp = Simplex()
 
-sp.FoundBasicSolutions()
+    name_file = input("Digite o Nome do arquivo com o formato: ")
 
-formatadas = sp.FormatSolutions()
+    try:
+        sp.CreateMatrices(name_file)
 
-final = sp.ValidationSolutions(formatadas)
+        sp.FoundBasicSolutions()
 
-sp.PrintSolution(final)
+        formatadas = sp.FormatSolutions()
 
+        final = sp.ValidationSolutions(formatadas)
 
-
-        
+        sp.PrintSolution(final)
+    except:
+        print("Erro!")
