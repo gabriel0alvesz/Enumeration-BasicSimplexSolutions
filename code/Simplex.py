@@ -21,6 +21,8 @@ class Simplex:
         self.A: np.matrix
         self.b: np.array
         self.basic_solutions: dict = {}
+        self.viables: int = 0
+        self.not_viables: int = 0
 
     def CreateMatrices(self, name_file: str):
         rd = ReadDocs()
@@ -91,9 +93,11 @@ class Simplex:
             z = np.dot(self.c, array)
 
             if min(array) < 0:
-                response = "inviável"    
+                response = "inviável"
+                self.not_viables = self.not_viables + 1   
             else:
                 response = "viável"
+                self.viables = self.viables + 1
                 if z < menor:
                     menor = z
                     index = cont
@@ -113,6 +117,10 @@ class Simplex:
                 print(f"Solução: x={tuple(sol.final_solution)},\tz = {sol.value},\t{sol.response} ==> Ótima")
             else:
                 print(f"Solução: x={tuple(sol.final_solution)},\tz = {sol.value},\t{sol.response}")
+        
+        print("\n\n")
+        print(f"Soluções básicas viáveis:   {self.viables}")
+        print(f"Soluções básicas inviáveis:  {self.not_viables}")
 
 
 if __name__ == "__main__":
